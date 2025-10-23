@@ -1,0 +1,31 @@
+{
+  "siteTitle": "Nova Zone — The Gift Boutique",
+  "subtitle": "Every product carries a love note 💙",
+  "startBtn": "Start Now",
+  "loading": "Loading your survey 💙",
+  "thankYou": "Thanks for your feedback 💙 Your opinion makes Nova Zone better.",
+  "followUs": "Follow us on Instagram",
+  "next": "Next",
+  "back": "Back",
+  "questions": {
+    "q1": "How did you hear about Nova Zone?",
+    "q1_opts": ["Instagram","Friend","Paid ad","Other"],
+    "q2": "What's your first impression of our products?",
+    "q2_opts": ["Very elegant","Nice","Average","Didn't like them"],
+    "q3": "What's most important when choosing a gift?",
+    "q3_opts": ["Luxurious packaging","Good price","Unique idea","Fast delivery"],
+    "q4": "What type of gifts do you prefer?",
+    "q4_opts": ["Plush & toys","Flowers & boxes","Lighting & decor","Custom surprises"],
+    "q5": "Which colors do you prefer?",
+    "q5_opts": ["Deep navy","Light pink","White/Silver","Mixed colors"],
+    "q6": "If you could design a gift, describe it in one word?",
+    "q7": "Have you purchased from Nova Zone before?",
+    "q7_opts": ["Yes","No"],
+    "q8": "If yes, how was your experience?",
+    "q8_opts": ["Excellent","Good","Average","Bad"],
+    "q9": "Do you plan to buy soon?",
+    "q9_opts": ["Definitely","Maybe","No"],
+    "q10": "Would you like to receive special offers?",
+    "q10_opts": ["Yes, definitely","Maybe later","No"]
+  }
+}

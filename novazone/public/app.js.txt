@@ -1,0 +1,37 @@
+renderStep(); updateProgress();
+  } else {
+    // submit
+    const payload = { lang, answers };
+    nextBtn.disabled = true; nextBtn.innerText = (lang==='ar')? '...جاري الإرسال' : 'Sending...';
+    try {
+      const res = await fetch('/api/submit', {
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      survey.classList.add('hidden');
+      thanks.classList.remove('hidden');
+      nextBtn.disabled = false;
+    } catch (e) {
+      alert((lang==='ar')? 'فشل الإرسال' : 'Send failed');
+      nextBtn.disabled = false;
+      nextBtn.innerText = L.next;
+    }
+  }
+}
+
+function updateProgress(){
+  const pct = Math.round(((step) / (questions.length-1)) * 100);
+  progressBar.style.width = pct + '%';
+}
+
+followBtn.onclick = ()=> {
+  // opens instagram link
+  window.open('https://www.instagram.com/novazone25?igsh=NHA2a3BqZmcxNmJ1&utm_source=qr','_blank');
+}
+homeBtn.onclick = ()=> {
+  thanks.classList.add('hidden');
+  welcome.classList.remove('hidden');
+  answers = {}; step = 0;
+}

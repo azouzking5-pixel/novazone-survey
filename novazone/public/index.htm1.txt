@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Nova Zone Survey</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app" class="app">
+    <!-- splash -->
+    <div id="splash" class="screen splash">
+      <div class="logo">Nova Zone</div>
+      <div class="loadingText" id="loadingText"></div>
+    </div>
+
+    <!-- welcome -->
+    <div id="welcome" class="screen welcome hidden">
+      <header class="topbar">
+        <div class="langSwitch">
+          <button id="toAr" class="active">العربية</button>
+          <button id="toEn">EN</button>
+        </div>
+      </header>
+      <main>
+        <h1 id="siteTitle"></h1>
+        <p id="subtitle"></p>
+        <button id="startBtn" class="primary"></button>
+        <p class="small">هذا الاستطلاع عام وسهل—لن يستغرق سوى دقيقة واحدة.</p>
+      </main>
+    </div>
+
+    <!-- survey steps -->
+    <div id="survey" class="screen survey hidden">
+      <div class="progress"><div id="progressBar"></div></div>
+      <div id="stepContainer"></div>
+      <div class="nav">
+        <button id="prevBtn" class="secondary hidden"></button>
+        <button id="nextBtn" class="primary"></button>
+      </div>
+    </div>
+
+    <!-- thank you -->
+    <div id="thanks" class="screen thanks hidden">
+      <h2 id="thankTitle"></h2>
+      <p id="thankSub"></p>
+      <a id="followBtn" class="primary" target="_blank" rel="noopener">تابعنا على إنستغرام</a>
+      <button id="homeBtn" class="secondary">العودة للرئيسية</button>
+    </div>
+  </div>
+
+  <script src="/locales/ar.json" type="application/json" id="arData"></script>
+  <script src="/locales/en.json" type="application/json" id="enData"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

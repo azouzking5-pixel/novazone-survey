@@ -1,0 +1,108 @@
+// server.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const Database = require('better-sqlite3');
+const cors = require('cors');
+const path = require('path');
+const nodemailer = require('nodemailer');
+const morgan = require('morgan');
+
+require('dotenv').config();
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(morgan('tiny'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+const db = new Database(path.join(__dirname, 'survey.db'));
+
+// init tables
+db.exec(`
+CREATE TABLE IF NOT EXISTS responses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  lang TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  q1 TEXT,
+  q2 TEXT,
+  q3 TEXT,
+  q4 TEXT,
+  q5 TEXT,
+  q6 TEXT,
+  q7 TEXT,
+  q8 TEXT,
+  q9 TEXT,
+  q10 TEXT,
+  extra TEXT
+);
+`);
+
+// helper: send email if SMTP configured
+async function sendEmail(to, subject, html) {
+  if (!process.env.SMTP_HOST) return false;
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  });
+  await transporter.sendMail({ from: process.env.EMAIL_FROM || process.env.SMTP_USER, to, subject, html });
+  return true;
+}
+
+// API: submit survey
+app.post('/api/submit', async (req, res) => {
+  try {
+    const payload = req.body; // expecting { lang: 'ar'|'en', answers: { q1:..., q2:..., ... }, extra? }
+    const lang = payload.lang || 'ar';
+    const a = payload.answers || {};
+
+    const insert = db.prepare(`INSERT INTO responses
+      (lang, q1,q2,q3,q4,q5,q6,q7,q8,q9,q10, extra)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`);
+    insert.run(
+      lang,
+      a.q1||null, a.q2||null, a.q3||null, a.q4||null, a.q5||null,
+      a.q6||null, a.q7||null, a.q8||null, a.q9||null, a.q10||null,
+      a.extra||null
+    );
+
+    // send email notification with content (optional)
+    const recipient = process.env.RESULT_EMAIL  process.env.EMAIL_TO  'Azouzking5@gmail.com';
+    const html = `
+      <h3>Nova Zone — New Survey Response</h3>
+      <p>Language: ${lang}</p>
+      <ul>
+        ${Object.keys(a).map(k => `<li><strong>${k}</strong>: ${String(a[k]||'')}</li>`).join('')}
+      </ul>
+      <p>IP: ${req.ip}</p>
+    `;
+    const emailed = await sendEmail(recipient, 'Nova Zone — Survey submitted', html).catch(()=>false);
+
+    res.json({ ok: true, emailed });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server error' });
+  }
+});
+
+// API: get results summary (protected lightly by simple key)
+app.get('/api/results', (req, res) => {
+  const key = req.query.key || '';
+  if (process.env.RESULTS_KEY && key !== process.env.RESULTS_KEY) {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+  const rows = db.prepare('SELECT * FROM responses ORDER BY created_at DESC').all();
+  res.json({ count: rows.length, rows });
+});
+
+// static index
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, ()=> console.log(`NovaZone survey server running on port ${PORT}`));
